@@ -1,105 +1,54 @@
-NAME = inception
-CXX = c++
+# Inception - build and run the whole infrastructure via docker compose
 
-DIR_OBJ = obj/
-SRC_DIR = src/
-INC_DIR = inc/
+NAME		= inception
 
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98
-INCLUDES = -I $(INC_DIR)
+SRCS_DIR	= srcs
+COMPOSE_FILE	= $(SRCS_DIR)/docker-compose.yml
+ENV_FILE	= $(SRCS_DIR)/.env
 
-SRCS =
-SRCS_BONUS =
-include srcs.mk
+# LOGIN must match the one used in docker-compose.yml's volume driver_opts
+LOGIN		= $(shell grep -m1 '^LOGIN=' $(ENV_FILE) | cut -d '=' -f2)
+DATA_DIR	= /home/$(LOGIN)/data
 
-OBJS = ${patsubst %.cpp,$(DIR_OBJ)%.o, $(shell echo $(SRCS) | sed "s|$(SRC_DIR)||g")}
-DEPS = ${patsubst %.o,%.d, $(OBJS)}
+COMPOSE		= docker compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE)
 
--include $(DEPS)
+.PHONY: all build up down start stop restart logs ps clean fclean re
 
-MAKEFLAGS += -j $(shell nproc)
+all: up
 
-MODE ?= debug
+build: $(ENV_FILE)
+	mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb
+	$(COMPOSE) build
 
-ifeq ($(filter $(MODE),debug release),)
-$(error MODE must be 'debug' or 'release')
-endif
+up: build
+	$(COMPOSE) up -d
 
-ifeq ($(MODE),debug)
-	CXXFLAGS += -O0 -g3 -D DEBUG=1
-	DEBUG = 1
-	TARGET = debug
-endif
+down:
+	$(COMPOSE) down
 
-ifeq ($(MODE),release)
-	CXXFLAGS += -O3 -flto -D DEBUG=0
-	DEBUG = 0
-	TARGET = release
-endif
+start:
+	$(COMPOSE) start
 
-.SILENT:
+stop:
+	$(COMPOSE) stop
 
-.PHONY: all
-all: gen_srcs
-all: $(NAME)
+restart: down up
 
-test: export CFLAGS += -DUNITTEST=1
-test: all
+logs:
+	$(COMPOSE) logs -f
 
-test_bonus: export CFLAGS += -DUNITTEST=1
-test_bonus: bonus
+ps:
+	$(COMPOSE) ps
 
-.PHONY: bonus
-bonus: export CFLAGS += -DBONUS=1
-bonus: all
+$(ENV_FILE):
+	$(error $(ENV_FILE) not found. Create it with your environment variables (see subject example))
 
-###########################################################
-######################### TOOLS ###########################
-###########################################################
+clean: down
+	$(COMPOSE) down --rmi all --volumes --remove-orphans
 
-define gen_srcs_file
-	$(shell echo "# Auto-generated file, do not edit!" > srcs.mk)
-	$(shell echo -n "SRCS += " >> srcs.mk)
-	$(shell find src -type f -name "*.cpp" | sed "s/.*_bonus.cpp//" | sed '$$ ! s/$$/ \\/' >> srcs.mk)
-endef
-
-.PHONY: gen_srcs
-gen_srcs:
-	$(call gen_srcs_file)
-
-.PHONY: cachegrind
-cachegrind:
-	valgrind --tool=cachegrind ./$(NAME) $(ARGS)
-
-.PHONY: callgrind
-callgrind:
-	valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes ./$(NAME) $(ARGS)
-
-########################## RULES ###########################
-
-%/:
-	mkdir -p $@
-
-$(DIR_OBJ)%.o: $(SRC_DIR)%.cpp
-	echo "Compiling $*.cpp"
-	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-$(NAME): $(DIR_OBJ) $(OBJS) Makefile
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $(NAME) $(OBJS)
-
-
-.PHONY: clean
-clean:
-	rm -Rf $(DIR_OBJ)
-
-.PHONY: fclean
 fclean: clean
-	rm -f $(NAME)
-	printf '# Auto-generated file, do not edit!\nSRCS +=\n' > srcs.mk
+	sudo rm -rf $(DATA_DIR)
 
-.PHONY: re
-re: fclean
-re: all
+re: fclean all
 
 .DEFAULT_GOAL = all
