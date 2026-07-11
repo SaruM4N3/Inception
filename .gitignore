@@ -1,2 +1,4 @@
 .vscode
 en.subject*.pdf
+srcs/.env
+secrets/*.txt
