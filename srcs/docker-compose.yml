@@ -45,6 +45,18 @@ services:
     depends_on:
       - mariadb
 
+  adminer:
+    image: adminer:inception
+    container_name: ${CONTAINER_NAME}-adminer
+    build: ./requirements/bonus/adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - inception
+    depends_on:
+      - mariadb
+
 
 
 volumes:
