@@ -1,5 +1,6 @@
 services:
   nginx:
+    image: nginx:inception
     container_name: ${CONTAINER_NAME}-nginx
     build: ./requirements/nginx
     env_file: .env
@@ -8,6 +9,20 @@ services:
       - "443:443"
     volumes:
       - wordpress:/var/www/html
+    networks:
+      - inception
+
+  mariadb:
+    image: mariadb:inception
+    container_name: ${CONTAINER_NAME}-mariadb
+    build: ./requirements/mariadb
+    env_file: .env
+    secrets:
+      - db_password
+      - db_root_password
+    restart: unless-stopped
+    volumes:
+      - mariadb:/var/lib/mysql
     networks:
       - inception
 
@@ -20,7 +35,19 @@ volumes:
       type: none
       o: bind
       device: /home/${LOGIN}/data/wordpress
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/${LOGIN}/data/mariadb
 
 networks:
   inception:
     driver: bridge
+
+secrets:
+  db_password:
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt

@@ -7,7 +7,7 @@ COMPOSE_FILE	= $(SRCS_DIR)/docker-compose.yml
 ENV_FILE	= $(SRCS_DIR)/.env
 
 # LOGIN must match the one used in docker-compose.yml's volume driver_opts
-LOGIN		= $(shell grep -m1 '^LOGIN=' $(ENV_FILE) | cut -d '=' -f2)
+LOGIN		= zsonie
 DATA_DIR	= /home/$(LOGIN)/data
 
 COMPOSE		= docker compose -f $(COMPOSE_FILE) --env-file $(ENV_FILE)
