@@ -38,6 +38,14 @@ if [ ! -f "$WP_PATH/wp-config.php" ]; then
 		--allow-root
 fi
 
+until redis-cli -h redis ping 2>/dev/null | grep -q PONG; do
+	sleep 1
+done
+
+wp config set WP_REDIS_HOST redis --path="$WP_PATH" --allow-root
+wp plugin install redis-cache --activate --path="$WP_PATH" --allow-root
+wp redis enable --path="$WP_PATH" --allow-root
+
 chown -R www-data:www-data "$WP_PATH"
 
 PHP_FPM_BIN=$(find /usr/sbin -name 'php-fpm*' | head -1)

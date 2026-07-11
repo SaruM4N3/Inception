@@ -44,6 +44,15 @@ services:
       - inception
     depends_on:
       - mariadb
+      - redis
+
+  redis:
+    image: redis:inception
+    container_name: ${CONTAINER_NAME}-redis
+    build: ./requirements/bonus/redis
+    restart: unless-stopped
+    networks:
+      - inception
 
   adminer:
     image: adminer:inception

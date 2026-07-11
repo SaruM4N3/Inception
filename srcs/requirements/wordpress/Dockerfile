@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
 	php-mbstring \
 	php-xml \
 	php-zip \
+	php-redis \
 	mariadb-client \
+	redis-tools \
 	curl \
 	&& rm -rf /var/lib/apt/lists/*
 
@@ -18,7 +20,7 @@ RUN curl -o /usr/local/bin/wp -L \
 
 # listen on TCP so nginx (another container) can reach php-fpm via fastcgi_pass wordpress:9000
 RUN PHP_FPM_CONF=$(find /etc/php -name www.conf) \
-	&& sed -i "s/^listen = .*/listen = 9000/" "$PHP_FPM_CONF"
+	&& sed -i "s/^listen = .*/listen = 0.0.0.0:9000/" "$PHP_FPM_CONF"
 
 COPY tools/setup_wp.sh /usr/local/bin/setup_wp.sh
 RUN chmod +x /usr/local/bin/setup_wp.sh
