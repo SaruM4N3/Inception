@@ -24,7 +24,9 @@ all: up
 
 build: secrets
 	mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb
-	$(COMPOSE) build
+	for s in mariadb redis adminer wordpress nginx; do \
+		$(COMPOSE) build $$s || exit 1; \
+	done
 
 up: build
 	$(COMPOSE) up -d
