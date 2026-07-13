@@ -1,0 +1,110 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: "Hiragino Sans", "Yu Gothic", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	background: #0d1b2a;
+	background-image: radial-gradient(circle at 50% 0%, #1b3a5c 0%, #0d1b2a 60%);
+	color: #eef2f6;
+	line-height: 1.7;
+}
+
+header {
+	position: relative;
+	padding: 5rem 1.5rem 3rem;
+	text-align: center;
+	overflow: hidden;
+	background: linear-gradient(180deg, #14304a 0%, transparent 100%);
+}
+
+header h1 {
+	font-size: 2.75rem;
+	letter-spacing: 0.05em;
+	color: #ffd9a0;
+	text-shadow: 0 0 24px rgba(255, 170, 80, 0.35);
+}
+
+header p {
+	margin-top: 0.75rem;
+	color: #a9c1d9;
+	font-size: 1.05rem;
+}
+
+main {
+	max-width: 860px;
+	margin: 0 auto;
+	padding: 1rem 1.5rem 4rem;
+}
+
+.hero {
+	margin: 0 0 2.75rem;
+}
+
+.hero img {
+	display: block;
+	width: 100%;
+	max-height: 480px;
+	object-fit: cover;
+	border-radius: 14px;
+	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+	border: 1px solid rgba(255, 181, 107, 0.25);
+}
+
+.hero figcaption {
+	margin-top: 0.6rem;
+	text-align: center;
+	font-size: 0.85rem;
+	color: #8ba3bd;
+	font-style: italic;
+}
+
+section {
+	margin-bottom: 2.75rem;
+}
+
+h2 {
+	font-size: 1.3rem;
+	margin-bottom: 0.85rem;
+	color: #ffb56b;
+	border-left: 3px solid #ffb56b;
+	padding-left: 0.6rem;
+}
+
+p {
+	color: #d7e2ec;
+}
+
+.facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 1rem;
+}
+
+.fact {
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 181, 107, 0.25);
+	border-radius: 10px;
+	padding: 1.1rem 1.3rem;
+}
+
+.fact h3 {
+	font-size: 1rem;
+	color: #ffd9a0;
+	margin-bottom: 0.5rem;
+}
+
+.fact p {
+	font-size: 0.92rem;
+	color: #c3d2e0;
+}
+
+footer {
+	text-align: center;
+	padding: 2rem 1.5rem;
+	color: #5f7896;
+	font-size: 0.85rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+}

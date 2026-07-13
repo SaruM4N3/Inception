@@ -6,7 +6,6 @@ SRCS_DIR	= srcs
 COMPOSE_FILE	= $(SRCS_DIR)/docker-compose.yml
 ENV_FILE	= $(SRCS_DIR)/.env
 
-# LOGIN must match the one used in docker-compose.yml's volume driver_opts
 LOGIN		= zsonie
 DATA_DIR	= /home/$(LOGIN)/data
 
@@ -24,9 +23,7 @@ all: up
 
 build: secrets
 	mkdir -p $(DATA_DIR)/wordpress $(DATA_DIR)/mariadb
-	for s in mariadb redis adminer wordpress nginx; do \
-		$(COMPOSE) build $$s || exit 1; \
-	done
+	$(COMPOSE) build
 
 up: build
 	$(COMPOSE) up -d
